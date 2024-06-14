@@ -15,7 +15,7 @@ I2C = I2C(0, scl=Pin(1), sda=Pin(0),freq=4000000)
 lcd = I2CcLcd(i2c, 0x27, 2, 16)
 
 #set up the ADC pin on pin26
-adc = ADC(Pin26))
+adc = ADC(Pin(26))
 
 
 vref = 3.3 #The maximum voltage the ADC pin can read
@@ -31,6 +31,13 @@ def calculate_voltage():
     raw value = adc.read _u16()
     voltage = (raw_vlaue / adc_resolution)* vref # convert raw_value to voltage(a number between 0 3.3)
     return voltage
+
+def append_data_to_file(timestamp_str,voltage):
+    try:
+        with open("votage_data.csv", "a") as data_file #open file in append mode
+             data_file.write("{}. {:.2f}\n".format(timestamp_str, voltage))
+    except Exception as e:
+        print("Error writing to file:("e)
 
 def_main():
     while True:
@@ -50,12 +57,14 @@ def_main():
         
         
         #Store voltage reading in a cav file
-        data_file = open("voltage_data_cav", "w")
+        data_file = open("voltage_data_csv", "w")
         data_file.write("Timestamp, Voltage\n")
         
         #Write the voltage and timestamp to the file
-        data_file.write("(), (:2f)\n.format(timestamp_str,voltage))
-        data_file.flush()#Ensure data is written to the file
+        data_file.write("{}, {:2f)\n".format(timestamp_str,voltage))
+        data_file.flush() #Ensure data is written to the file
+        
+        append_data_ro_file(timestamp_str, voltage)
         
         #wait for the 1 second before reading the voltage
         utime.sleep(1)
@@ -72,12 +81,9 @@ def_main():
         
         utime.sleep(1)
                 
-main()#Call the main function for the program run
-
 try:
-    main()    
+    main()
 except KeyboardInterrupt:
-    data_file.close() close the datafile when the program is interrupted
-    print("Data file closed")
+    print("Program Interrupted")
 
 
